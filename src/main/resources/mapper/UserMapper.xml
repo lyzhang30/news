@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.DY.mapper.UserMapper">
+
+    <resultMap id="BaseUserMap" type="com.DY.entity.User">
+        <result property = "userId" column = "userId" jdbcType="INTEGER"/>
+        <result property = "userName" column = "userName" jdbcType="VARCHAR"/>
+        <result property = "loginName" column = "loginName" jdbcType="VARCHAR"/>
+        <result property = "tel" column = "tel" jdbcType="VARCHAR"/>
+        <result property = "registerTime" column = "registerTime" jdbcType="TIMESTAMP"/>
+        <result property = "status" column = "status" jdbcType="CHAR"/>
+        <result property = "roleId" column ="roleId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id ="selectUserListWhere">
+        <where>
+            u.roleId = r.roleId
+            <if test="keywords!=null and keywords!=''">
+                and (u.userName like concat('%',#{keywords},'%') or u.loginName like concat('%',#{keywords},'%'))
+            </if>
+            <if test="userListRoleId!=null and userListRoleId!=''">
+                and (u.roleId =#{userListRoleId})
+            </if>
+        </where>
+
+    </sql>
+    <select id="queryAllUser" resultMap="BaseUserMap">
+        select * from t_user
+    </select>
+
+    <select id="querryUserByIdAndName" resultType="com.DY.entity.User">
+        select * from t_user where loginName=#{loginName} and password=#{password}
+    </select>
+
+    <select id="querryUserListBykeyAndId" resultType="com.DY.entity.User">
+        select u.*,r.roleName from t_role as r ,t_user as u
+        <include refid="selectUserListWhere"></include>
+        order by u.registerTime desc
+    </select>
+
+    <select id="qerryUserById" resultType="com.DY.entity.User">
+        select * from t_user where userId =#{userId}
+    </select>
+
+    <select id="querryUserByLoginName" parameterType="String" resultType="com.DY.entity.User">
+        select * from t_user where loginName =#{loginName} limit 0,1
+    </select>
+    <update id ="updateUserByUserId" parameterType="com.DY.entity.User">
+        update t_user
+        <set>
+            registerTime =#{registerTime},
+            status =#{status},
+        <if test="userName!=null and userName !=''">
+            userName =#{userName},
+        </if>
+        <if test ="password!=null and password!=''">
+            password =#{password},
+        </if>
+        <if test="tel!=null and tel!=''">
+            tel=#{tel},
+        </if>
+        <if test="roleId!=null and roleId!=''">
+            roleId =#{roleId}
+        </if>
+        </set>
+        where userId=#{userId}
+
+    </update>
+
+    <update id ="updateUserStatusByUserId" parameterType="com.DY.entity.User" >
+        update t_user set status =#{status} where userId =#{userId}
+    </update>
+
+    <delete id="deleteUserByUserId" >
+        delete from t_user where userId =#{userId}
+    </delete>
+
+    <insert id ="addUser" parameterType="com.DY.entity.User">
+        insert into t_user (
+            userName,
+            loginName,
+            password,
+            tel,
+            registerTime,
+            status,
+            roleId
+        )
+        values(#{userName},#{loginName},#{password},#{tel},#{registerTime},#{status},#{roleId})
+    </insert>
+</mapper>
