@@ -13,6 +13,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleMapper roleMapper;
+
+
     @Override
     public List<Role> querryRoleList() {
         return this.roleMapper.querryRoleList();

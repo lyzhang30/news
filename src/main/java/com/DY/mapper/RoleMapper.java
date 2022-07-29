@@ -1,12 +1,14 @@
 package com.DY.mapper;
 
 import com.DY.entity.Role;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 /**
  * 角色接口
  */
+
 public interface RoleMapper {
     /**
      * 查询用户角色列表
